@@ -1,18 +1,20 @@
 # Shop Operations App
 
-Simple Next.js web app for browsing customers, placing orders, viewing order history, and inspecting the warehouse late-delivery priority queue from the operational `shop.db` database.
+Simple Next.js web app for browsing customers, placing orders, viewing order history, and inspecting a fraud-risk warehouse queue backed by Supabase.
 
 ## Requirements
 
 - Node.js 20+
-- `shop.db` at the project root
-- `shop.db` should contain the operational tables used by the app:
+- A Supabase project with these public schema tables:
   - `customers`
   - `orders`
   - `order_items`
   - `products`
   - `shipments`
-- `order_predictions` is optional for now, but required if you want the warehouse priority queue to show scored results
+  - `fraud_predictions`
+- A local `.env.local` file with:
+  - `SUPABASE_URL`
+  - `SUPABASE_SERVICE_ROLE_KEY`
 
 ## Setup
 
@@ -45,11 +47,10 @@ npm run start
 ## App Notes
 
 - The current customer is stored in the `customer_id` cookie.
-- A customer banner appears on every page when a customer is selected.
-- Database access and most SQL queries live in `lib/db.js`.
-- The app shows friendly error messages when `shop.db` is missing, required tables are missing, or a page has no results.
-- The warehouse queue page is available at `/warehouse/priority`.
-- If `order_predictions` does not exist yet, the queue page explains that predictions are unavailable instead of failing.
+- Database access lives in `lib/db.js` and uses the Supabase JS client on the server.
+- The app uses the service-role key from `.env.local`, so keep that file private.
+- The warehouse queue reads from `fraud_predictions` and orders rows by `fraud_prob`.
+- If `fraud_predictions` is unavailable, the queue page shows a readable fallback message instead of crashing.
 
 ## Manual QA Checklist
 
@@ -72,13 +73,8 @@ npm run start
    - Click the new order ID
    - Confirm `/orders/[order_id]` shows the correct line items, quantities, unit prices, and line totals
 
-4. Run scoring
-   - Open `/run-scoring`
-   - If your ML inference job is already connected, run it and confirm it writes to `order_predictions`
-   - If scoring is not wired yet, confirm the page clearly explains that dependency
-
-5. View priority queue
+4. Review fraud queue
    - Open `/warehouse/priority`
-   - If `order_predictions` exists and scoring has been run, confirm the queue loads rows ordered by late-delivery probability
-   - After scoring a newly placed order, confirm that order can appear in the priority queue when it is still unfulfilled
-   - If `order_predictions` is missing, confirm the page shows a readable fallback message instead of crashing
+   - Confirm the queue loads rows ordered by fraud probability
+   - Confirm shipped orders do not appear in the queue
+   - Confirm the scored timestamp and fraud prediction fields render correctly

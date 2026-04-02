@@ -4,16 +4,15 @@ export const metadata = {
   title: "Debug Schema"
 };
 
-export default function DebugSchemaPage() {
-  const schema = getSchemaDetails();
+export default async function DebugSchemaPage() {
+  const schema = await getSchemaDetails();
 
   return (
     <section className="page-card stack">
       <div>
         <h2>Database Schema Debug View</h2>
         <p className="muted">
-          Developer-only page for inspecting the real contents of{" "}
-          <span className="code-inline">shop.db</span>.
+          Developer-only page for inspecting the expected Supabase schema used by this app.
         </p>
       </div>
 

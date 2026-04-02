@@ -6,3 +6,4 @@ out
 __MACOSX/
 *.db-shm
 *.db-wal
+.env.local

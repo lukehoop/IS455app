@@ -33,7 +33,7 @@ async function placeOrder(formData) {
   let result;
 
   try {
-    result = createOrderForCustomer(customerId, items);
+    result = await createOrderForCustomer(customerId, items);
   } catch (error) {
     const message = getFriendlyErrorMessage(error);
     redirect(`/place-order?error=${encodeURIComponent(message)}`);
@@ -57,7 +57,7 @@ export default async function PlaceOrderPage({ searchParams }) {
     redirect("/select-customer");
   }
 
-  const customer = getCustomerById(selectedCustomerId);
+  const customer = await getCustomerById(selectedCustomerId);
 
   if (!customer) {
     redirect("/select-customer");
@@ -69,7 +69,7 @@ export default async function PlaceOrderPage({ searchParams }) {
   let loadError = "";
 
   try {
-    products = getProducts();
+    products = await getProducts();
   } catch (dbError) {
     loadError = getFriendlyErrorMessage(dbError);
   }
