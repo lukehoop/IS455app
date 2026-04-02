@@ -18,7 +18,7 @@ export default async function OrdersPage({ searchParams }) {
     redirect("/select-customer");
   }
 
-  const customer = getCustomerById(selectedCustomerId);
+  const customer = await getCustomerById(selectedCustomerId);
 
   if (!customer) {
     redirect("/select-customer");
@@ -28,7 +28,7 @@ export default async function OrdersPage({ searchParams }) {
   let loadError = "";
 
   try {
-    orders = getOrdersForCustomer(selectedCustomerId);
+    orders = await getOrdersForCustomer(selectedCustomerId);
   } catch (error) {
     loadError = getFriendlyErrorMessage(error);
   }
@@ -47,7 +47,7 @@ export default async function OrdersPage({ searchParams }) {
 
       <div>
         <h2>Order History</h2>
-        <p className="muted">All orders for {customer.full_name} from `shop.db`.</p>
+        <p className="muted">All orders for {customer.full_name} from Supabase.</p>
       </div>
 
       {loadError ? <div className="error-banner">{loadError}</div> : null}

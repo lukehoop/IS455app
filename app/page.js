@@ -6,9 +6,8 @@ export default function HomePage() {
       <div>
         <h2>Operational Shop App</h2>
         <p className="muted">
-          This scaffold uses the existing <span className="code-inline">shop.db</span> file at the
-          project root and is ready for the customer selection, ordering, history, warehouse queue,
-          and scoring features.
+          This app uses Supabase through environment variables and is ready for customer selection,
+          ordering, history, warehouse queue, and scoring-related features.
         </p>
       </div>
 

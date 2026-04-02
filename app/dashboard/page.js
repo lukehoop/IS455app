@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   let loadError = "";
 
   try {
-    dashboard = getCustomerDashboard(selectedCustomerId);
+    dashboard = await getCustomerDashboard(selectedCustomerId);
   } catch (error) {
     loadError = getFriendlyErrorMessage(error);
   }
@@ -45,7 +45,7 @@ export default async function DashboardPage() {
     <section className="page-card stack">
       <div>
         <h2>Customer Dashboard</h2>
-        <p className="muted">Summary for the currently selected customer from `shop.db`.</p>
+        <p className="muted">Summary for the currently selected customer from Supabase.</p>
       </div>
 
       <div className="table-block">

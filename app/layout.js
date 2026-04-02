@@ -20,7 +20,7 @@ const navItems = [
 export default async function RootLayout({ children }) {
   const cookieStore = await cookies();
   const selectedCustomerId = cookieStore.get("customer_id")?.value;
-  const selectedCustomer = getCustomerById(selectedCustomerId);
+  const selectedCustomer = await getCustomerById(selectedCustomerId);
 
   return (
     <html lang="en">

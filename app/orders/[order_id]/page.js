@@ -22,7 +22,7 @@ export default async function OrderDetailPage({ params }) {
     redirect("/select-customer");
   }
 
-  const customer = getCustomerById(selectedCustomerId);
+  const customer = await getCustomerById(selectedCustomerId);
 
   if (!customer) {
     redirect("/select-customer");
@@ -34,7 +34,7 @@ export default async function OrderDetailPage({ params }) {
   let loadError = "";
 
   try {
-    orderDetails = getOrderDetailsForCustomer(selectedCustomerId, orderId);
+    orderDetails = await getOrderDetailsForCustomer(selectedCustomerId, orderId);
   } catch (error) {
     loadError = getFriendlyErrorMessage(error);
   }

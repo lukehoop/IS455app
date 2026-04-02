@@ -15,12 +15,12 @@ function formatProbability(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
 }
 
-export default function WarehousePriorityPage() {
+export default async function WarehousePriorityPage() {
   let queue = { available: false, rows: [] };
   let loadError = "";
 
   try {
-    queue = getWarehousePriorityQueue();
+    queue = await getWarehousePriorityQueue();
   } catch (error) {
     loadError = getFriendlyErrorMessage(error);
   }
@@ -28,11 +28,10 @@ export default function WarehousePriorityPage() {
   return (
     <section className="page-card stack">
       <div>
-        <h2>Late Delivery Priority Queue</h2>
+        <h2>Fraud Risk Priority Queue</h2>
         <p className="muted">
-          This queue helps warehouse staff focus first on open orders that the model believes are
-          most likely to be delivered late, so they can prioritize intervention where it may matter
-          most.
+          This queue helps warehouse staff focus first on open orders that the model believes carry
+          the highest fraud risk, so they can prioritize manual review where it may matter most.
         </p>
       </div>
 
@@ -41,9 +40,8 @@ export default function WarehousePriorityPage() {
       {!loadError && !queue.available ? (
         <div className="table-block">
           <p className="muted">
-            The <span className="code-inline">order_predictions</span> table is not available in the
-            current <span className="code-inline">shop.db</span>, so the priority queue cannot be
-            displayed yet.
+            The <span className="code-inline">fraud_predictions</span> table is not available in
+            Supabase yet, so the priority queue cannot be displayed.
           </p>
         </div>
       ) : !loadError ? (
@@ -57,9 +55,9 @@ export default function WarehousePriorityPage() {
                 <th>Fulfilled</th>
                 <th>Customer ID</th>
                 <th>Customer Name</th>
-                <th>Late Delivery Probability</th>
-                <th>Predicted Late Delivery</th>
-                <th>Prediction Timestamp</th>
+                <th>Fraud Probability</th>
+                <th>Predicted Fraud</th>
+                <th>Scored At</th>
               </tr>
             </thead>
             <tbody>
@@ -74,8 +72,8 @@ export default function WarehousePriorityPage() {
                     <td>{row.fulfilled ? "Yes" : "No"}</td>
                     <td>{row.customer_id}</td>
                     <td>{row.customer_name}</td>
-                    <td>{formatProbability(row.late_delivery_probability)}</td>
-                    <td>{row.predicted_late_delivery ? "Yes" : "No"}</td>
+                    <td>{formatProbability(row.fraud_probability)}</td>
+                    <td>{row.predicted_fraud ? "Yes" : "No"}</td>
                     <td>{row.prediction_timestamp}</td>
                   </tr>
                 ))

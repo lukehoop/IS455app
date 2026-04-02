@@ -28,7 +28,7 @@ export default async function SelectCustomerPage({ searchParams }) {
   let loadError = "";
 
   try {
-    customers = getCustomers(search);
+    customers = await getCustomers(search);
   } catch (error) {
     loadError = getFriendlyErrorMessage(error);
   }
@@ -38,7 +38,8 @@ export default async function SelectCustomerPage({ searchParams }) {
       <div>
         <h2>Select Customer</h2>
         <p className="muted">
-          Search the operational database and choose an existing customer to act as for testing.
+          Search the Supabase-backed operational database and choose an existing customer to act as
+          for testing.
         </p>
       </div>
 
