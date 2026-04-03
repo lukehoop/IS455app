@@ -1,0 +1,17 @@
+{
+  "model_name": "fraud_pipeline",
+  "model_version": "2.0.0",
+  "trained_at_utc": "2026-04-03T21:34:47.590016+00:00",
+  "num_training_rows": 3752,
+  "num_test_rows": 1251,
+  "features": [
+    "num_items",
+    "avg_price",
+    "total_value",
+    "customer_age",
+    "customer_order_count"
+  ],
+  "label_col": "is_fraud_label",
+  "threshold": 0.588561988434975,
+  "model_artifact": "fraud_model.sav"
+}
