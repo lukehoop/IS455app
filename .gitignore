@@ -7,3 +7,9 @@ __MACOSX/
 *.db-shm
 *.db-wal
 .env.local
+
+__pycache__/
+*.pyc
+.env.local
+.next/
+node_modules/
