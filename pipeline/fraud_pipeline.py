@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import os
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
 import pandas as pd
 import requests
 from dotenv import load_dotenv
-import os
 
-# This points Python to your specific env file
-load_dotenv(dotenv_path=".env.local")
+# Repo root (parent of pipeline/) so env loads even if cwd is not the project root
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env.local")
 
 # Environment:
 #   SUPABASE_URL = https://<ref>.supabase.co
