@@ -10,8 +10,8 @@ export default function RunScoringPage() {
   const handleRunScoring = async () => {
     setIsScoring(true);
     try {
-      // This calls the Python API bridge we discussed earlier
-      const response = await fetch("/api/score", {
+      // Updated to point to the correct Python bridge URL
+      const response = await fetch("/api", {
         method: "POST",
       });
 
@@ -19,8 +19,16 @@ export default function RunScoringPage() {
         // Once successful, redirect to the Priority Queue as required
         router.push("/warehouse/priority");
       } else {
-        const errorData = await response.json();
-        alert(`Scoring failed: ${errorData.error || "Unknown error"}`);
+        // We use .text() first in case the server returns a 500 error page instead of JSON
+        const errorText = await response.text();
+        let errorMessage = "Unknown error";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = errorText || errorMessage;
+        }
+        alert(`Scoring failed: ${errorMessage}`);
       }
     } catch (err) {
       alert("Failed to connect to the scoring API. Make sure your server is running.");
