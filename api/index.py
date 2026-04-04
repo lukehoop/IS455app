@@ -3,11 +3,17 @@ import json
 import sys
 import os
 
-# This adds the root of your project to the python path so it can find your other files
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+# 1. Add the root folder (..) to the path
+root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if root_path not in sys.path:
+    sys.path.append(root_path)
 
-# Now we import your actual logic
-# If inference.py is in a folder called 'pipeline', use: from pipeline.inference import run_inference
+# 2. Add the pipeline folder specifically so its files can find each other
+pipeline_path = os.path.join(root_path, 'pipeline')
+if pipeline_path not in sys.path:
+    sys.path.append(pipeline_path)
+
+# Now import your logic from the pipeline folder
 from pipeline.inference import run_inference 
 
 class handler(BaseHTTPRequestHandler):
@@ -16,7 +22,6 @@ class handler(BaseHTTPRequestHandler):
             # Trigger your ML logic
             df_result = run_inference()
             
-            # Prepare the response
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -37,6 +42,5 @@ class handler(BaseHTTPRequestHandler):
         
         return
 
-    # Optional: allow GET for easy browser testing
     def do_GET(self):
         self.do_POST()
