@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import os
 from pathlib import Path
 
 import json
@@ -19,7 +19,7 @@ from fraud_pipeline import (
 
 def _load_model_payload() -> dict:
     # This finds the folder where inference.py lives
-    root = Path(__file__).resolve().parent 
+    root = Path(os.getcwd()) / "pipeline"
     model_path = root / MODEL_FILENAME
     
     if not model_path.exists():
@@ -32,7 +32,7 @@ def _load_model_payload() -> dict:
 
 
 def _load_model_version() -> str:
-    root = Path(__file__).resolve().parent
+    root = Path(os.getcwd()) / "pipeline"
     metadata_path = root / METADATA_FILENAME
     try:
         with open(metadata_path, "r", encoding="utf-8") as f:

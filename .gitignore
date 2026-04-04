@@ -13,3 +13,4 @@ __pycache__/
 .env.local
 .next/
 node_modules/
+.vercel
