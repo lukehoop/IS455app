@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import joblib
 import pandas as pd
@@ -62,22 +62,39 @@ def run_inference() -> pd.DataFrame:
     fraud_prob = pipeline.predict_proba(X_live)[:, 1]
     is_fraud_pred = (fraud_prob >= threshold).astype(int)
 
-    scored_at = datetime.now(UTC).isoformat()
-    df_pred = pd.DataFrame({
-        "scored_at_utc": scored_at,
-        "order_id": df_live["order_id"].astype(int),
-        "customer_id": df_live["customer_id"].astype(int),
-        "fraud_prob": fraud_prob,
-        "is_fraud_pred": is_fraud_pred.astype(bool),
-        "threshold_used": threshold,
-        "model_version": model_version,
-    })
+    # One timestamp per row so the UI does not look like duplicate writes; same batch run.
+    base_time = datetime.now(UTC)
+    rows = []
+    for i in range(len(df_live)):
+        order_row = df_live.iloc[i]
+        feature_snapshot = {
+            col: float(order_row[col]) if pd.notna(order_row[col]) else None for col in feature_cols
+        }
+        rows.append(
+            {
+                "scored_at_utc": (base_time + timedelta(microseconds=i)).isoformat(),
+                "order_id": int(order_row["order_id"]),
+                "customer_id": int(order_row["customer_id"]),
+                "fraud_prob": float(fraud_prob[i]),
+                "is_fraud_pred": bool(int(is_fraud_pred[i])),
+                "threshold_used": float(threshold),
+                "model_version": model_version,
+                "feature_snapshot": feature_snapshot,
+            }
+        )
 
-    # Upsert into Supabase
-    upsert_predictions(df_pred.to_dict(orient="records"))
+    upsert_predictions(rows)
+
+    df_pred = pd.DataFrame(rows)
 
     print(f"Scored {len(df_pred)} rows with threshold={threshold:.4f}")
     print(f"Predicted fraud rate: {df_pred['is_fraud_pred'].mean():.4%}")
+    for i in range(min(5, len(rows))):
+        r = rows[i]
+        print(
+            f"  order_id={r['order_id']} prob={r['fraud_prob']:.4f} "
+            f"fraud={r['is_fraud_pred']} features={r['feature_snapshot']}"
+        )
     return df_pred
 
 
